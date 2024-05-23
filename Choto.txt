@@ -1,0 +1,71 @@
+------ СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ
+
+create login hello_word with password = 'De_05';
+
+
+-- Переменные для цикла
+DECLARE @id INT = 1;
+DECLARE @username NVARCHAR(50);
+DECLARE @password NVARCHAR(50);
+DECLARE @dbname NVARCHAR(50);
+
+-- Цикл для создания пользователей, баз данных и настройки прав доступа
+WHILE @id <= 10
+BEGIN
+    SET @username = 'user' + CAST(@id AS NVARCHAR(10));
+    SET @password = LEFT(CONVERT(VARCHAR(50), NEWID()), 5);
+    SET @dbname = 'BD' + CAST(@id AS NVARCHAR(10));
+
+    -- Создание логина и пользователя
+    EXEC sp_addlogin @loginame = @username, @passwd = @password;
+    EXEC sp_adduser @loginame = @username, @name_in_db = @username;
+
+    -- Создание базы данных
+    EXEC ('CREATE DATABASE ' + @dbname);
+    EXEC ('USE ' + @dbname + '; CREATE USER ' + @username + ' FOR LOGIN ' + @username + '; ALTER ROLE db_owner ADD MEMBER ' + @username);
+
+    -- Вставка данных в таблицу Users в базе данных BD
+    INSERT INTO dbName.dbo.Users (Username, Password)
+    VALUES (@username, @password);
+
+	-- Шифрование
+	UPDATE Users
+	SET EncryptedPassword = EncryptByPassPhrase('Secret Password', Password)
+	WHERE Username = @username;
+
+    -- Переход к следующему пользователю
+    SET @id = @id + 1;
+END
+GO
+
+------- ПРЕДОСТАВЛЕНИЕ ПРАВ ДОСТУПА
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON BD1 TO user1;
+
+
+
+------ ШИФРОВАНИЕ ПАРОЛЕЙ
+
+use [dbName]
+alter table Users
+add EncryptedPassword1 varbinary(max);
+
+use [dbName]
+update Users
+set EncryptedPassword1 = ENCRYPTBYPASSPHRASE('User''s password: ', password);
+
+use [dbName]
+select * from Users
+
+
+------ РЕЗЕРВНОЕ КОПИРОВАНИЕ
+BACKUP DATABASE BD1
+TO DISK = N'D:\BD1.bak'
+WITH FORMAT, MEDIANAME = 'BD1_Backup', NAME = 'Full Backup of BD1';
+GO
+
+------ ВОССТАНОВЛЕНИЕ
+RESTORE DATABASE dbName
+FROM DISK = 'C:\Users\Admin\Desktop\экзамен 22.05 и 23.05\dbName.bak'
+WITH REPLACE;
+GO

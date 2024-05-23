@@ -1,0 +1,26 @@
+1.	Определение сущностей:
+o	Клиенты (Customers)
+o	Сотрудники (Employees)
+o	Товары (Products)
+o	Заказы (Orders)
+o	Статусы заказов (OrderStatuses)
+o	Детали заказа (OrderDetails)
+o	Продажи (Sales)
+o	Промо компании (Promotions)
+2.	Определение атрибутов и ключей:
+o	Customers: CustomerID (PK), FirstName, LastName, MiddleName, Phone, Email
+o	Employees: EmployeeID (PK, GUID), FirstName, LastName, MiddleName, BirthDate, Phone, City, Street, House, Apartment
+o	Products: ProductID (PK), Article, Name, Category, Price, Image, Unit, ManufactureDate, ExpiryDate, ManufacturerFirm, ManufacturerCountry
+o	Orders: OrderID (PK), OrderDate, CustomerID (FK), StatusID (FK)
+o	OrderStatuses: StatusID (PK), StatusName
+o	OrderDetails: OrderDetailID (PK), OrderID (FK), ProductID (FK), Quantity
+o	Sales: SaleID (PK), SaleDate, PaymentMethod, EmployeeID (FK), CustomerID (FK), OrderID (FK)
+o	Promotions: PromotionID (PK), CustomerID (FK), PromotionDetails
+3.	Связи между сущностями:
+o	Один клиент может иметь множество заказов (Customers 1:N Orders).
+o	Каждый заказ может иметь множество деталей заказа (Orders 1:N OrderDetails).
+o	Один заказ может быть в одном из нескольких статусов (OrderStatuses 1:N Orders).
+o	Один товар может быть включен во множество деталей заказов (Products 1:N OrderDetails).
+o	Один заказ может быть связан с одной продажей (Orders 1:1 Sales).
+o	Каждый клиент может быть зарегистрирован в одной или нескольких промо компаниях (Customers 1:N Promotions).
+o	Каждый сотрудник может обрабатывать множество продаж (Employees 1:N Sales).
